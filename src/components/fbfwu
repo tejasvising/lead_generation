@@ -1,0 +1,597 @@
+//  const options = {
+//     chart: {
+//       type: 'bar',
+//       toolbar: { show: false },
+//       fontFamily: 'Outfit',
+//     },
+//     plotOptions: {
+//       bar: {
+//         horizontal: true,
+//         barHeight: '60%',
+//         borderRadius: 4,
+//       },
+//     },
+//     dataLabels: {
+//       enabled: true,
+//       style: {
+//         fontSize: '12px',
+//         fontFamily: 'Outfit',
+//         fontWeight: 500,
+//         colors: ['#fff'],
+//       },
+//     },
+//     xaxis: {
+//       categories: ['Trading', 'Manufacturing', 'Healthcare', 'Construction', 'Agriculture'],
+//       title: {
+//         text: 'Number of Applications',
+//         style: {
+//           fontSize: '12px',
+//           fontFamily: 'Outfit',
+//         },
+//       },
+//       labels: {
+//         style: {
+//           fontSize: '12px',
+//           fontFamily: 'Outfit',
+//         },
+//       },
+//     },
+//     yaxis: {
+//       title: {
+//         text: 'Sectors',
+//         style: {
+//           fontSize: '12px',
+//           fontFamily: 'Outfit',
+//         },
+//       },
+//       labels: {
+//         style: {
+//           fontSize: '12px',
+//           fontFamily: 'Outfit',
+//         },
+//       },
+//     },
+//     colors: ['#6A0DAD', '#7A3DD0', '#5D65CB', '#27D1C8', '#59E6D4'],
+//     grid: {
+//       borderColor: 'transparent',
+//       xaxis: { lines: { show: false } },
+//       yaxis: { lines: { show: false } },
+//     },
+//     tooltip: {
+//       enabled: true,
+//     },
+//   };
+
+//   const series = [
+//     {
+//       name: 'Applications',
+//       data: [25, 21, 9, 18, 13],
+//     },
+//   ];
+
+
+//   import React, { useState, useEffect, useMemo } from "react";
+//   import Chart from "react-apexcharts";
+//   import {
+//     Modal,
+//     Box,
+//     Card,
+//     Typography,
+//     Select,
+//     MenuItem,
+//     IconButton,
+//     Tabs,
+//     Tab,
+//   } from "@mui/material";
+  
+//   import "@fontsource/outfit";
+//   import "@fontsource/outfit/400.css";
+//   import "../App.css"; // Assuming this path is correct in the user's environment
+  
+//   import CloseIcon from "@mui/icons-material/Close";
+//   import { Agriculture } from "@mui/icons-material"; // Not used in the provided snippet, but kept as it was there.
+//   //import EWSPopupHigh from "../../Popups/EWSPopupHigh"; // Commented out as in original
+//   //import EWSPopupLow from "../../Popups/EWSPopupLow"; // Commented out as in original
+//   //import EWSPopupMedium from "../../Popups/EWSPopupMedium"; // Commented out as in original
+  
+//   const API_URL = process.env.REACT_APP_API_BASE_URL; // Assuming this is correctly configured
+  
+//   const EWSClassificationChart = () => {
+//     const [tabValue, setTabValue] = useState(0);
+//     const [open, setOpen] = useState(false);
+//     const [selectedSection, setSelectedSection] = useState(null);
+//     const [donutData, setDonutData] = useState({
+//       overallCount: 0,
+//       overallExposure: 0,
+//       countHigh: 0,
+//       countLow: 0,
+//       countMedium: 0,
+//       exposureLow: 0,
+//       exposureMedium: 0,
+//       exposureHigh: 0,
+//     });
+  
+//     const handleTabChange = (event, newValue) => {
+//       setTabValue(newValue);
+//       setSelectedSection(null);
+//     };
+  
+//     const modalStyle = {
+//       position: "absolute",
+//       top: "50%",
+//       left: "50%",
+//       transform: "translate(-50%, -50%)",
+//       bgcolor: "background.paper",
+//       boxShadow: 24,
+//       p: 3,
+//       borderRadius: 2,
+//       minWidth: 400,
+//       width: "90%",
+//       outline: "none",
+//     };
+  
+//     // Fetch data for the donut chart from the API
+//     useEffect(() => {
+//       const fetchData = async () => {
+//         try {
+//           // Fetch High Risk data
+//           const responseHigh = await fetch(`${API_URL}/donutReport/${window.parent.userName}/high`);
+//           let exposureHigh = 0;
+//           let countHigh = 0;
+//           if (responseHigh.status !== 204 && responseHigh.ok) {
+//             const dataHigh = await responseHigh.json();
+//             for (let i = 0; i < dataHigh.length; i++) {
+//               exposureHigh += Number(dataHigh[i].exposure);
+//             }
+//             countHigh = dataHigh.length;
+//           }
+  
+//           // Fetch Medium Risk data
+//           const responseMedium = await fetch(`${API_URL}/donutReport/${window.parent.userName}/medium`);
+//           let exposureMedium = 0;
+//           let countMedium = 0;
+//           if (responseMedium.status !== 204 && responseMedium.ok) {
+//             const dataMedium = await responseMedium.json();
+//             for (let i = 0; i < dataMedium.length; i++) {
+//               exposureMedium += Number(dataMedium[i].exposure);
+//             }
+//             countMedium = dataMedium.length;
+//           }
+  
+//           // Fetch Low Risk data
+//           const responseLow = await fetch(`${API_URL}/donutReport/${window.parent.userName}/low`);
+//           let exposureLow = 0;
+//           let countLow = 0;
+//           if (responseLow.status !== 204 && responseLow.ok) {
+//             const dataLow = await responseLow.json();
+//             for (let i = 0; i < dataLow.length; i++) {
+//               exposureLow += Number(dataLow[i].exposure);
+//             }
+//             countLow = dataLow.length;
+//           }
+  
+//           // Update donutData state with fetched values
+//           setDonutData({
+//             overallCount: countLow + countMedium + countHigh,
+//             overallExposure: Number(((exposureHigh + exposureLow + exposureMedium) / 10000000).toFixed(2)),
+//             countHigh: countHigh,
+//             countLow: countLow,
+//             countMedium: countMedium,
+//             exposureLow: Number((exposureLow / 10000000).toFixed(2)),
+//             exposureMedium: Number((exposureMedium / 10000000).toFixed(2)),
+//             exposureHigh: Number((exposureHigh / 10000000).toFixed(2)),
+//           });
+//         } catch (error) {
+//           console.error('Error fetching donut report data:', error);
+//         }
+//       };
+  
+//       fetchData();
+//     }, []); // Empty dependency array means this effect runs once on mount
+  
+//     // Categories for the "Deal Size" donut chart
+//     const categories = [
+//       { label: "High Risk", count: donutData.countHigh, color: "#FF0004" },
+//       { label: "Medium", count: donutData.countMedium, color: "#F0B811" },
+//       { label: "Low Risk", count: donutData.countLow, color: "#9CC19B" },
+//     ];
+  
+//     // Data for both tabs (Deal Size and Sector Wise)
+//     const tabData = [
+//       {
+//         title: "Overall",
+//         series: [donutData.exposureHigh, donutData.exposureMedium, donutData.exposureLow],
+//         percentages: [
+//           ((donutData.exposureHigh / donutData.overallExposure) * 100).toFixed(2),
+//           ((donutData.exposureMedium / donutData.overallExposure) * 100).toFixed(2),
+//           ((donutData.exposureLow / donutData.overallExposure) * 100).toFixed(2),
+//         ],
+//         totalExposure: donutData.overallExposure + "Cr.",
+//         totalBorrowers: donutData.overallCount,
+//         categories: categories,
+//       },
+//       {
+//         title: "Sectors",
+//         totalExposure: "980 Cr.", // Hardcoded as per original, could be dynamic if API available
+//         totalBorrowers: 28, // Hardcoded as per original, could be dynamic if API available
+//         categories: [
+//           { label: "Trading", count: 5, color: "#7400B8" },
+//           { label: "Manufacturing", count: 10, color: "#6930C3" },
+//           { label: "Healthcare", count: 13, color: "#5E60CE" },
+//           { label: "Construction", count: 3, color: "#56CFE1" },
+//           { label: "Agriculture", count: 3, color: "#5AEDC9" },
+//         ],
+//       },
+//     ];
+  
+//     const activeData = tabData[tabValue];
+  
+//     // Series data for the "Sector Wise" bar chart, derived from tabData
+//     const sectorWiseSeries = useMemo(() => {
+//       return [{
+//         name: 'Applications',
+//         data: tabData[1].categories.map(c => c.count),
+//       }];
+//     }, [tabData]); // Recompute if tabData changes
+  
+//     // Chart options for both donut and bar charts, memoized for performance
+//     const chartOptions = useMemo(() => {
+//       if (tabValue === 0) {
+//         // Options for the "Deal Size" (Donut) chart
+//         return {
+//           chart: {
+//             type: "donut",
+//             events: {
+//               dataPointSelection: (event, chartContext, config) => {
+//                 const index = config.dataPointIndex;
+//                 if (index !== -1) {
+//                   const selectedLabel = categories[index].label;
+//                   setSelectedSection(selectedLabel);
+//                   setOpen(true); // Open modal on slice click
+//                 }
+//               },
+//             },
+//           },
+//           labels: activeData.categories.map((c) => c.label),
+//           colors: activeData.categories.map((c) => c.color),
+//           legend: { show: false },
+//           dataLabels: { enabled: false },
+//           plotOptions: {
+//             pie: {
+//               donut: {
+//                 size: "70%",
+//                 labels: {
+//                   show: true,
+//                   total: {
+//                     show: true,
+//                     label: "Total Exposure",
+//                     fontSize: "14px",
+//                     formatter: () => activeData.totalExposure,
+//                   },
+//                   value: {
+//                     show: true,
+//                     formatter: function (val) {
+//                       return `${val} Cr.`; // Adds the "Cr." suffix to donut value
+//                     },
+//                   },
+//                 },
+//               },
+//             },
+//           },
+//           stroke: { width: 0 },
+//           tooltip: {
+//             y: {
+//               formatter: (val, opts) =>
+//                 `${val} Cr. (${activeData.percentages[opts.seriesIndex]}%)`,
+//             },
+//           },
+//         };
+//       } else {
+//         // Options for the "Sector Wise" (Bar) chart
+//         return {
+//           chart: {
+//             type: 'bar',
+//             toolbar: { show: false },
+//             fontFamily: 'Outfit',
+//           },
+//           plotOptions: {
+//             bar: {
+//               horizontal: true,
+//               barHeight: '40%',
+//               borderRadius: 4,
+//               distributed: true, // Enables distinct colors for each bar from the 'colors' array
+//             },
+//           },
+//           dataLabels: {
+//             enabled: true,
+//             style: {
+//               fontSize: '12px',
+//               fontFamily: 'Outfit',
+//               fontWeight: 500,
+//               colors: ['#fff'], // White color for data labels for better contrast
+//             },
+//             offsetX: -40, // Adjusted to move labels further left into the bars
+//             formatter: function (val) {
+//               return val; // Ensure only the number is displayed
+//             }
+//           },
+//           xaxis: {
+//             categories: activeData.categories.map(c => c.label), // Dynamic categories from tabData
+//             title: {
+//               text: 'Number of Applications',
+//               style: {
+//                 fontSize: '12px',
+//                 fontFamily: 'Outfit',
+//               },
+//             },
+//             labels: {
+//               style: {
+//                 fontSize: '12px',
+//                 fontFamily: 'Outfit',
+//               },
+//             },
+//           },
+//           yaxis: {
+//             title: {
+//               text: 'Sectors',
+//               style: {
+//                 fontSize: '12px',
+//                 fontFamily: 'Outfit',
+//               },
+//             },
+//             labels: {
+//               style: {
+//                 fontSize: '12px',
+//                 fontFamily: 'Outfit',
+//                 colors: ['#333'], // Set a default color for Y-axis labels
+//               },
+//               align: 'left', // Align Y-axis labels to the left
+//             },
+//           },
+//           // Colors array for individual bars (due to distributed: true)
+//           colors: activeData.categories.map(c => c.color),
+//           grid: {
+//             borderColor: 'transparent',
+//             xaxis: { lines: { show: false } },
+//             yaxis: { lines: { show: false } }, // Ensure no horizontal lines
+//           },
+//           tooltip: {
+//             enabled: true,
+//           },
+//         };
+//       }
+//     }, [tabValue, activeData, categories]); // Dependencies for memoization
+  
+//     return (
+//       <Card
+//         sx={{
+//           margin:1,
+//           padding: 1,
+//           maxHeight: "285px",
+//           border: "solid 1px #e8e8e8",
+//         }}
+//       >
+//         <Box
+//           sx={{
+//             display: "flex",
+//             justifyContent: "space-between",
+//             alignItems: "center",
+//             mb: "1%",
+//           }}
+//         >
+//           <Typography
+//             variant="h6"
+//             sx={{
+//               fontSize: "16px",
+//               fontWeight: "bold",
+//               color: "#333",
+//               margin: 0,
+//             }}
+//           >
+//             Leads Distribution
+//           </Typography>
+//           <Select
+//             size="small"
+//             defaultValue="Monthly"
+//             sx={{
+//               fontSize: "12px",
+//               padding: 0,
+//               borderRadius: "12px",
+//               maxHeight: "26px",
+//               maxWidth: "100px",
+//             }}
+//           >
+//             <MenuItem value="Monthly">Monthly</MenuItem>
+//             <MenuItem value="Quarterly">Quarterly</MenuItem>
+//             <MenuItem value="Yearly">Yearly</MenuItem>
+//           </Select>
+//         </Box>
+  
+//         <Tabs
+//           value={tabValue}
+//           onChange={handleTabChange}
+//           TabIndicatorProps={{ style: { backgroundColor: "#800080" } }}
+//           textColor="purple"
+//           sx={{
+//             minHeight: "32px",
+//             marginBottom: 1,
+//             "& .MuiTab-root": {
+//               fontSize: "13px",
+//               minHeight: "32px",
+//               color: "#555",
+//             },
+//             "& .Mui-selected": {
+//               color: "#800080",
+//               fontWeight: 600,
+//             },
+//           }}
+//         >
+//           <Tab label="Deal Size" sx={{ textTransform: "none", fontFamily: 'Outfit' }} />
+//           <Tab label="Sector Wise" sx={{ textTransform: "none", fontFamily: 'Outfit' }} />
+//         </Tabs>
+  
+//         <Box
+//           sx={{
+//             display: "flex",
+//             justifyContent: "space-between",
+//             alignItems: "center",
+//           }}
+//         >
+//           <Box sx={{
+//             flex: 1, display: "flex",
+//             justifyContent: "center",
+//             alignItems: "center",
+//           }}>
+//             <Chart
+//               options={chartOptions}
+//               series={tabValue === 0 ? activeData.series : sectorWiseSeries}
+//               type={tabValue === 0 ? "donut" : "bar"}
+//               height={tabValue === 0 ? 175 : 220}
+//               width={tabValue === 0 ? 200 : 350}
+//             />
+//           </Box>
+  
+//           {tabValue === 0 && (
+//             <Box
+//               sx={{
+//                 display: "flex",
+//                 flexDirection: "column",
+//                 justifyContent: "center",
+//                 ml: 2,
+//                 fontSize: "13px",
+//                 color: "#444",
+//               }}
+//             >
+//               {activeData.categories.map((cat, index) => (
+//                 <Box
+//                   key={index}
+//                   sx={{
+//                     display: "flex",
+//                     alignItems: "center",
+//                     mb: "22px",
+//                   }}
+//                 >
+//                   <Box
+//                     sx={{
+//                       width: "12px",
+//                       height: "12px",
+//                       borderRadius: "3px",
+//                       backgroundColor: cat.color,
+//                       mr: "8px",
+//                     }}
+//                   />
+//                   <span>
+//                     {cat.label} ({cat.count}):{" "}
+//                     <strong>
+//                       {activeData.series[index]} Cr. (
+//                       {activeData.percentages[index]}%)
+//                     </strong>
+//                   </span>
+//                 </Box>
+//               ))}
+//             </Box>
+//           )}
+//         </Box>
+  
+//         <Box
+//           sx={{
+//             mt: "4.1%",
+//             ml: "8%",
+//             fontSize: "14px",
+//             color: "#555",
+//           }}
+//         >
+//           Total Borrowers:<strong> {activeData.totalBorrowers}</strong>
+//         </Box>
+  
+//         <Modal open={open} onClose={() => setOpen(false)}>
+//           <Box sx={modalStyle}>
+//             <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}>
+//               <IconButton onClick={() => setOpen(false)} size="small">
+//                 <CloseIcon />
+//               </IconButton>
+//             </Box>
+//             {/* {selectedSection === "High Risk" ? (
+//               <EWSPopupHigh />
+//             ) : selectedSection === "Medium" ? (
+//               <EWSPopupMedium />
+//             ) : selectedSection === "Low Risk" ? (
+//               <EWSPopupLow />
+//             ) : null} */}
+//           </Box>
+//         </Modal>
+//       </Card>
+//     );
+//   };
+  
+//   export default EWSClassificationChart;
+  
+
+  const region = {
+  options: {
+    chart: {
+      type: 'bar',
+      toolbar: { show: false },
+      fontFamily: "Outfit",
+    },
+    
+    xaxis: {
+      categories: ["A & Above", "BBB- to BBB+", "Below BBB-", "Not Rated"],
+      labels: {
+        style: { fontFamily: "Outfit" },
+      },
+      title: {
+        text: 'Region Wise',
+      },
+    },
+    stroke: {
+      width: [0, 0, 3],
+      curve: "smooth",
+    },
+    yaxis: [
+      {
+        title: {
+          text: "Leads",
+          style: { fontFamily: "Outfit" },
+        },
+        labels: {
+          style: { fontFamily: "Outfit" },
+        },
+      },
+      {
+        opposite: true,
+        title: {
+          text: "Conversion Rate (%)",
+          style: { fontFamily: "Outfit" },
+        },
+        labels: {
+          style: { fontFamily: "Outfit" },
+        },
+      },
+    ],
+    colors: ["#592E83", "#9984D4", "#FFAE03"],
+    grid: {
+      show: true,
+      strokeDashArray: 4,
+      xaxis: {
+        lines: { show: false },
+      },
+      yaxis: {
+        lines: { show: true },
+      },
+    },
+    legend: {
+      position: 'bottom',
+     // horizontalAlign: 'center',
+      fontSize: '10px',
+      fontWeight: 500,
+      markers: { radius: 4 },
+      
+    },
+  },
+  series: [
+    { name: "Region", type: "column", data: [25, 18, 22, 18] },
+    { name: "Lead Count", type: "column", data: [50, 42, 63, 20] },
+    { name: "Conversion Rate", type: "line", data: [58, 42, 64, 70] },
+  ],
+};

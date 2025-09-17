@@ -1,5 +1,10 @@
+body,html,#root,*{
+  font-family: "Outfit";
+  background: '#F5F5F5';
+}
 .App {
   text-align: center;
+  background-color: #e8e8e8;
 }
 
 .App-logo {
@@ -36,3 +41,74 @@
     transform: rotate(360deg);
   }
 }
+
+.ews-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  max-width: 500px;
+  font-family: Arial, sans-serif;
+}
+
+.ews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ews-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.ews-dropdown {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.ews-chart-legend-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chart-wrapper {
+  flex: 1;
+}
+
+.custom-legend-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 20px;
+  font-size: 13px;
+  color: #444;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.color-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  margin-right: 8px;
+}
+
+.ews-footer {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #555;
+}
+
+.apexcharts-legend {
+  flex-wrap: nowrap !important;
+}
+
