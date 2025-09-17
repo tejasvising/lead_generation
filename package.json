@@ -2,7 +2,7 @@
   "name": "lead",
   "version": "0.1.0",
   "private": true,
-  "homepage": "leadGeneration",
+ 
   "dependencies": {
     "@canvasjs/react-charts": "^1.0.2",
     "@emotion/react": "^11.14.0",
