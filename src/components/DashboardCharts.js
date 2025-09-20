@@ -552,7 +552,7 @@ responsive: [
   return (
      <Box
       sx={{
-        mt: -1,
+      
         // no extra left margin here; MainLayout should handle sidebar offset
         p:1,
         display: "grid",
@@ -560,7 +560,8 @@ responsive: [
         columnGap: 3,
         rowGap: 2,
         justifyContent: "space-between",   // center the two‑column grid
-        backgroundColor:'#F5F5F5'
+        backgroundColor:'#F5F5F5',
+        height:'100%'
       }}
     >
         {[
