@@ -754,9 +754,12 @@ if (loading) {
 }
 //marginLeft: collapsed ? "60px" : "250px"
   return (
-    <Box sx={{ backgroundColor: '#F5F5F5', display:'flex',flexDirection:'row',fontFamily:'Outfit',height:'92vh'}}>
+    <Box sx={{ backgroundColor: '#F5F5F5', display:'flex',flexDirection:'row',fontFamily:'Outfit',height:'92vh',justifyContent: 'center'}}>
           
-    <Box component="main" sx={{marginLeft: collapsed ? "5%" : "20%", flexGrow: 1 , p: 2,backgroundColor: '#F5F5F5',border:'none' ,height: 'auto',minHeight:'81.5vh',fontFamily:'Outfit'}} >  {/*"81.5vh"*/}
+    <Box component="main" sx={{ display:'flex' ,flexDirection:'column', p: 2,
+    backgroundColor: '#F5F5F5',border:'none' ,height: '100%',
+      fontFamily:'Outfit',maxWidth: "1200px",   // ✅ keeps it responsive & centered
+    width: "100%",    }} >  {/*"81.5vh"*/}
      <Box sx={{ display: "flex", gap: 2, mb: 2, justifyContent:'space-between',padding:0 }}>
       
       <Box
